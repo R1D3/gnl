@@ -6,7 +6,7 @@
 /*   By: emassou <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/05 19:08:49 by emassou           #+#    #+#             */
-/*   Updated: 2018/01/05 19:08:51 by emassou          ###   ########.fr       */
+/*   Updated: 2018/02/21 17:35:49 by emassou          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,31 @@ int	nlen(char *str)
 	return (i);
 }
 
+int	checknmalloc(const int fd, char **line, char ***stock, t_struct *p)
+{
+	if (fd < 0 || line == NULL || fd > OPEN_MAX)
+		return (-1);
+	if (*stock == NULL)
+		*stock = malloc(sizeof(char*) * (OPEN_MAX + 1));
+	if (!(p->b = malloc(sizeof(char) * BUFF_SIZE + 1)))
+		return (-1);
+	if (!((*stock)[fd]))
+		if (!((*stock)[fd] = ft_strnew(BUFF_SIZE)))
+		{
+			free(p->b);
+			return (-1);
+		}
+	return (0);
+}
+
 int	get_next_line(const int fd, char **line)
 {
-	static char		*stock[BUFF_SIZE + 1];
+	static char		**stock;
 	t_struct		p;
 	int				ret;
 
-	if (fd < 0)
+	if (checknmalloc(fd, line, &stock, &p) < 0)
 		return (-1);
-	if (!stock[fd])
-		stock[fd] = ft_strnew(BUFF_SIZE);
 	while (!(ft_strchr(stock[fd], '\n')) && (ret = read(fd, p.b, BUFF_SIZE)))
 	{
 		if (ret == -1)
@@ -50,5 +65,6 @@ int	get_next_line(const int fd, char **line)
 	ft_strlen(&stock[fd][nlen(stock[fd])]));
 	ft_strdel(&stock[fd]);
 	stock[fd] = p.tmp2;
+	free(p.b);
 	return (1);
 }

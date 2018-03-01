@@ -18,13 +18,14 @@
 # include <sys/stat.h>
 # include <sys/types.h>
 # include <unistd.h>
-# define BUFF_SIZE  4
+# include <limits.h>
+# define BUFF_SIZE 55
 
 typedef struct	s_struct
 {
 	char		*tmp;
 	char		*tmp2;
-	char		b[BUFF_SIZE + 1];
+	char		*b;
 }				t_struct;
 
 int				get_next_line(const int fd, char **line);
